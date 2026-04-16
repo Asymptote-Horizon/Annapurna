@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Annapurna AI – Women Farmer Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #1a4a2e;
+    --green-mid: #2d7a4f;
+    --green-light: #4caf72;
+    --green-pale: #a8d5b5;
+    --cream: #f7f3ec;
+    --gold: #e8b84b;
+    --warm-white: #fefcf8;
+    --glass-bg: rgba(255,255,255,0.18);
+    --glass-border: rgba(255,255,255,0.35);
+    --shadow-soft: 0 8px 32px rgba(26,74,46,0.18);
+    --shadow-card: 0 4px 24px rgba(26,74,46,0.12);
+    --red-alert: #e05252;
+    --blue-info: #4a90d9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a4a2e 0%, #2d7a4f 35%, #3d9962 60%, #6cbf84 100%);
+    background-attachment: fixed;
+    color: var(--green-deep);
+    overflow-x: hidden;
+  }
+
+  /* Decorative bg blobs */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -120px; right: -120px;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(232,184,75,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -100px; left: -100px;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(76,175,114,0.22) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(20px);
+    background: rgba(26,74,46,0.7);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    padding: 0 24px;
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 62px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold), #f0c84e);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 10px rgba(232,184,75,0.45);
+  }
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--cream);
+    letter-spacing: -0.3px;
+  }
+  .logo-text span { color: var(--gold); }
+
+  /* Language Toggle */
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 30px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .lang-btn {
+    padding: 5px 14px;
+    border-radius: 24px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.25s;
+    color: rgba(255,255,255,0.65);
+    background: transparent;
+    letter-spacing: 0.3px;
+  }
+  .lang-btn.active {
+    background: var(--gold);
+    color: var(--green-deep);
+    box-shadow: 0 2px 8px rgba(232,184,75,0.4);
+  }
+
+  /* ── MAIN WRAPPER ── */
+  main {
+    position: relative; z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ── GLASS CARD BASE ── */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* ── HERO SECTION ── */
+  .hero {
+    padding: 36px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(232,184,75,0.08) 0%, rgba(255,255,255,0.04) 100%);
+    border-radius: 20px;
+  }
+  .hero-tagline {
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 5vw, 36px);
+    color: var(--warm-white);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .hero-subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  /* Voice Button */
+  .voice-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .voice-btn {
+    position: relative;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green-light), var(--green-mid));
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 24px rgba(45,122,79,0.5);
+    transition: transform 0.2s;
+  }
+  .voice-btn:hover { transform: scale(1.06); }
+  .voice-btn:active { transform: scale(0.97); }
+  .voice-btn svg { color: white; width: 34px; height: 34px; }
+
+  /* Pulse rings */
+  .voice-btn::before, .voice-btn::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 2px solid rgba(76,175,114,0.45);
+    animation: pulse-ring 2s ease-out infinite;
+  }
+  .voice-btn::after {
+    inset: -22px;
+    border-color: rgba(76,175,114,0.25);
+    animation-delay: 0.6s;
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.92); opacity: 0.8; }
+    100% { transform: scale(1.18); opacity: 0; }
+  }
+
+  .voice-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+  .voice-label-mr {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  /* ── ALERTS BAR ── */
+  .alert-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    background: rgba(232,184,75,0.14);
+    border: 1px solid rgba(232,184,75,0.35);
+    border-radius: 14px;
+    font-size: 13px;
+    color: var(--cream);
+  }
+  .alert-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ── FEATURE GRID ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+  }
+
+  .feature-card {
+    padding: 22px 20px 20px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.14);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.28);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px rgba(26,74,46,0.22);
+  }
+  .card-icon-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .card-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .icon-green { background: rgba(76,175,114,0.22); }
+  .icon-gold  { background: rgba(232,184,75,0.22); }
+  .icon-blue  { background: rgba(74,144,217,0.22); }
+
+  .card-badge {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .badge-live { background: rgba(76,175,114,0.22); color: #6be09e; }
+  .badge-ai   { background: rgba(74,144,217,0.22); color: #7fb8f0; }
+  .badge-fin  { background: rgba(232,184,75,0.22); color: var(--gold); }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--warm-white);
+    margin-bottom: 4px;
+  }
+  .card-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  /* Crop Scanner card */
+  .scan-area {
+    background: rgba(0,0,0,0.2);
+    border: 1.5px dashed rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .scan-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green-light), transparent);
+    animation: scan-move 2.5s ease-in-out infinite;
+    top: 0;
+  }
+  @keyframes scan-move {
+    0%   { top: 0%; opacity: 1; }
+    50%  { top: 88%; opacity: 1; }
+    100% { top: 0%; opacity: 0.3; }
+  }
+  .scan-icon { font-size: 28px; margin-bottom: 6px; }
+  .scan-status {
+    font-size: 11px;
+    color: var(--green-light);
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    animation: pulse-text 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-text { 0%,100%{opacity:1} 50%{opacity:0.45} }
+  .scan-crop-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+  }
+
+  /* AI Diagnostic Report */
+  .diagnostic-report {
+    background: rgba(26,74,46,0.35);
+    border: 1px solid rgba(76,175,114,0.3);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 10px;
+  }
+  .report-title {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--green-light);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .report-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.75);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .report-item:last-child { border-bottom: none; }
+  .report-val { color: var(--cream); font-weight: 600; }
+  .report-val.warn { color: #f0a04a; }
+  .report-val.good { color: #6be09e; }
+  .report-val.bad  { color: #f07070; }
+
+  /* Bachat Gat card */
+  .loan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .loan-label { font-size: 12px; color: rgba(255,255,255,0.6); }
+  .loan-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--warm-white);
+  }
+  .loan-amount span { font-size: 13px; color: rgba(255,255,255,0.5); font-family: 'DM Sans', sans-serif; }
+  .progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green-light), var(--gold));
+    border-radius: 99px;
+    width: 62%;
+    animation: grow-bar 1.4s ease-out forwards;
+    transform-origin: left;
+  }
+  @keyframes grow-bar { from{width:0} to{width:62%} }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.45);
+  }
+  .credit-score-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .score-chip {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+  .score-chip .val { font-size: 16px; font-weight: 700; color: var(--warm-white); }
+  .score-chip .lbl { font-size: 9.5px; color: rgba(255,255,255,0.45); margin-top: 1px; }
+  .score-chip .val.gold { color: var(--gold); }
+  .score-chip .val.grn  { color: #6be09e; }
+
+  /* Mandi Prices card */
+  .mandi-header-row {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 12px;
+  }
+  .mandi-market {
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.5);
+  }
+  .mandi-live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #6be09e;
+    animation: blink 1.2s infinite;
+  }
+  .mandi-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 11px;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+  }
+  .mandi-item:hover { background: rgba(255,255,255,0.1); }
+  .mandi-item:last-child { margin-bottom: 0; }
+  .mandi-crop { display: flex; align-items: center; gap: 9px; }
+  .mandi-emoji { font-size: 22px; }
+  .mandi-name  { font-size: 14px; font-weight: 600; color: var(--cream); }
+  .mandi-sub   { font-size: 10.5px; color: rgba(255,255,255,0.4); }
+  .mandi-price-col { text-align: right; }
+  .mandi-price { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--warm-white); }
+  .mandi-unit  { font-size: 10px; color: rgba(255,255,255,0.4); }
+  .mandi-change { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+  .up   { color: #6be09e; background: rgba(107,224,158,0.14); }
+  .down { color: #f07070; background: rgba(240,112,112,0.14); }
+  .mandi-footer {
+    margin-top: 10px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+  }
+
+  /* ── SDG GOALS BAR ── */
+  .sdg-section { padding: 20px 22px; }
+  .sdg-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .sdg-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .sdg-pill {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 13px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.07);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sdg-pill:hover { background: rgba(255,255,255,0.13); }
+  .sdg-pill.active {
+    background: rgba(232,184,75,0.18);
+    border-color: rgba(232,184,75,0.5);
+    color: var(--gold);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 20px 20px 30px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.8;
+  }
+  footer strong { color: rgba(255,255,255,0.5); }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .feature-grid { grid-template-columns: 1fr; }
+    .hero { padding: 28px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🌾</div>
+      <div class="logo-text">Annapurna <span>AI</span></div>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('mr', this)">मराठी</button>
+      <button class="lang-btn" onclick="setLang('en', this)">English</button>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main>
+
+  <!-- HERO -->
+  <div class="glass hero">
+    <p class="hero-tagline">International Year of Women Farmers 2026</p>
+    <h1 class="hero-title" id="hero-title">आपली शेती, आपला आवाज</h1>
+    <p class="hero-subtitle" id="hero-sub">AI-powered assistant designed for women farmers of Pune & Nashik</p>
+    <div class="voice-wrapper">
+      <button class="voice-btn" onclick="toggleVoice()" id="voiceBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <div>
+        <p class="voice-label" id="voice-label">अन्नपूर्णाशी बोला</p>
+        <p class="voice-label-mr" id="voice-sublabel">Tap the mic to speak</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERT -->
+  <div class="alert-bar">
+    <div class="alert-dot"></div>
+    <span id="alert-text">🌧️ &nbsp;<strong>हवामान सतर्कता:</strong> मध्यम पाऊस अपेक्षित – पुणे जिल्हा, 16–18 एप्रिल. कांदा पिकाची काळजी घ्या.</span>
+  </div>
+
+  <!-- FEATURE GRID -->
+  <div class="feature-grid">
+
+    <!-- CROP SCANNER -->
+    <div class="feature-card">
+      <div class="card-icon-row">
+        <div class="card-icon icon-blue">📸</div>
+        <span class="card-badge badge-ai">AI Vision</span>
+      </div>
+      <h3 class="card-title" id="card1-title">Crop Scanner</h3>
+      <p class="card-desc" id="card1-desc">Point your camera at any crop. Annapurna AI detects disease, pest damage & nutrient deficiency in seconds.</p>
+      <div class="scan-area">
+        <div class="scan-line"></div>
+        <div class="scan-icon">🧅</div>
+        <div class="scan-status" id="scan-status">SCANNING IN PROGRESS...</div>
+        <div class="scan-crop-label">कांदा पीक · Allium cepa · Field-2B</div>
+      </div>
+      <!-- AI Diagnostic Report -->
+      <div class="diagnostic-report">
+        <div class="report-title">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          AI Diagnostic Report
+        </div>
+        <div class="report-item"><span>Disease Detected</span><span class="report-val bad">Purple Blotch</span></div>
+        <div class="report-item"><span>Severity</span><span class="report-val warn">Moderate (38%)</span></div>
+        <div class="report-item"><span>Confidence</span><span class="report-val good">94.2%</span></div>
+        <div class="report-item"><span>Recommended Action</span><span class="report-val good">Mancozeb Spray</span></div>
+        <div class="report-item"><span>Nearest Input Shop</span><span class="report-val">Alandi Agro, 2.1 km</span></div>
+      </div>
+    </div>
+
+    <!-- BACHAT GAT LEDGER -->
+    <div class="feature-card">
+      <div class="card-icon-row">
+        <div class="card-icon icon-gold">💰</div>
+        <span class="card-badge badge-fin">Bachat Gat</span>
+      </div>
+      <h3 class="card-title" id="card2-title">बचत गट Ledger</h3>
+      <p class="card-desc" id="card2-desc">No land title needed. Your SHG reputation score is your collateral. Track micro-loans & savings transparently.</p>
+      <div class="loan-header">
+        <span class="loan-label">Active Micro-Loan</span>
+      </div>
+      <div class="loan-amount">₹12,500 <span>of ₹20,000</span></div>
+      <div class="progress-bar" style="margin-top:10px">
+        <div class="progress-fill"></div>
+      </div>
+      <div class="progress-meta">
+        <span>62% repaid</span>
+        <span>Next EMI: 1 May</span>
+      </div>
+      <div class="credit-score-row">
+        <div class="score-chip">
+          <div class="val gold">A+</div>
+          <div class="lbl">Reputation Score</div>
+        </div>
+        <div class="score-chip">
+          <div class="val grn">18</div>
+          <div class="lbl">Months Member</div>
+        </div>
+        <div class="score-chip">
+          <div class="val">100%</div>
+          <div class="lbl">Repayment</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANDI PRICES -->
+    <div class="feature-card">
+      <div class="card-icon-row">
+        <div class="card-icon icon-green">📊</div>
+        <span class="card-badge badge-live">Live</span>
+      </div>
+      <h3 class="card-title" id="card3-title">Mandi Prices</h3>
+      <div class="mandi-header-row">
+        <div class="mandi-live-dot"></div>
+        <span class="mandi-market">APMC Gultekdi, Pune · Today 6:30 AM</span>
+      </div>
+      <div class="mandi-item">
+        <div class="mandi-crop">
+          <span class="mandi-emoji">🧅</span>
+          <div>
+            <div class="mandi-name">Onion</div>
+            <div class="mandi-sub">कांदा · Grade A</div>
+          </div>
+        </div>
+        <div class="mandi-price-col">
+          <div class="mandi-price">₹28<span style="font-size:11px;color:rgba(255,255,255,0.4)">/kg</span></div>
+          <span class="mandi-change up">↑ 12%</span>
+        </div>
+      </div>
+      <div class="mandi-item">
+        <div class="mandi-crop">
+          <span class="mandi-emoji">🍇</span>
+          <div>
+            <div class="mandi-name">Grapes</div>
+            <div class="mandi-sub">द्राक्षे · Thompson Seedless</div>
+          </div>
+        </div>
+        <div class="mandi-price-col">
+          <div class="mandi-price">₹65<span style="font-size:11px;color:rgba(255,255,255,0.4)">/kg</span></div>
+          <span class="mandi-change down">↓ 4%</span>
+        </div>
+      </div>
+      <div class="mandi-item">
+        <div class="mandi-crop">
+          <span class="mandi-emoji">🌿</span>
+          <div>
+            <div class="mandi-name">Sugarcane</div>
+            <div class="mandi-sub">ऊस · FRP Rate</div>
+          </div>
+        </div>
+        <div class="mandi-price-col">
+          <div class="mandi-price">₹340<span style="font-size:11px;color:rgba(255,255,255,0.4)">/qtl</span></div>
+          <span class="mandi-change up">↑ 2%</span>
+        </div>
+      </div>
+      <div class="mandi-footer">Rates updated every 30 min · Source: Maharashtra APMC</div>
+    </div>
+
+  </div><!-- /grid -->
+
+  <!-- SDG PILLS -->
+  <div class="glass sdg-section">
+    <p class="sdg-title">UN Sustainable Development Goals — Addressed</p>
+    <div class="sdg-pills">
+      <div class="sdg-pill active">🍽️ SDG 2 · Zero Hunger</div>
+      <div class="sdg-pill">💊 SDG 3 · Good Health</div>
+      <div class="sdg-pill">⚡ SDG 7 · Clean Energy</div>
+      <div class="sdg-pill">👩‍💼 SDG 8 · Decent Work</div>
+      <div class="sdg-pill">🏭 SDG 9 · Industry & Innovation</div>
+      <div class="sdg-pill">🌍 SDG 13 · Climate Action</div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Beta Version 0.9</strong> · Built for Alandi / Pune Farmers<br>
+  MIT Academy of Engineering · Creative Technologies (2301183) · CA-03 · IYWF 2026<br>
+  Annapurna AI — Empowering Women Farmers, One Harvest at a Time 🌾
+</footer>
+
+<script>
+  let lang = 'mr';
+
+  const content = {
+    mr: {
+      heroTitle: 'आपली शेती, आपला आवाज',
+      heroSub: 'पुणे व नाशिक च्या महिला शेतकऱ्यांसाठी AI सहाय्यक',
+      voiceLabel: 'अन्नपूर्णाशी बोला',
+      voiceSub: 'माइकला स्पर्श करा आणि बोला',
+      alertText: '🌧️ &nbsp;<strong>हवामान सतर्कता:</strong> मध्यम पाऊस अपेक्षित – पुणे जिल्हा, 16–18 एप्रिल. कांदा पिकाची काळजी घ्या.',
+      c1: 'पीक स्कॅनर', c2: 'बचत गट लेजर', c3: 'मंडी भाव',
+      scanStatus: 'स्कॅनिंग सुरू आहे...',
+      c1desc: 'कॅमेरा पिकावर धरा. AI काही सेकंदात रोग, किड व पोषण कमतरता ओळखतो.',
+      c2desc: 'जमीन कागदपत्र नाहीत? काळजी नको. बचत गटातील तुमची प्रतिष्ठा हेच तुमचे तारण आहे.'
+    },
+    en: {
+      heroTitle: 'Her Farm. Her Voice. Her Future.',
+      heroSub: 'AI-powered assistant designed for women farmers of Pune & Nashik',
+      voiceLabel: 'Speak to Annapurna',
+      voiceSub: 'Tap the mic to speak',
+      alertText: '🌧️ &nbsp;<strong>Weather Alert:</strong> Moderate rain expected – Pune District, Apr 16–18. Protect your Onion crop.',
+      c1: 'Crop Scanner', c2: 'Bachat Gat Ledger', c3: 'Mandi Prices',
+      scanStatus: 'SCANNING IN PROGRESS...',
+      c1desc: 'Point your camera at any crop. Annapurna AI detects disease, pest damage & nutrient deficiency in seconds.',
+      c2desc: 'No land title needed. Your SHG reputation score is your collateral. Track micro-loans & savings transparently.'
+    }
+  };
+
+  function setLang(l, btn) {
+    lang = l;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const c = content[l];
+    document.getElementById('hero-title').textContent  = c.heroTitle;
+    document.getElementById('hero-sub').textContent    = c.heroSub;
+    document.getElementById('voice-label').textContent = c.voiceLabel;
+    document.getElementById('voice-sublabel').textContent = c.voiceSub;
+    document.getElementById('alert-text').innerHTML    = c.alertText;
+    document.getElementById('card1-title').textContent = c.c1;
+    document.getElementById('card2-title').textContent = c.c2;
+    document.getElementById('card3-title').textContent = c.c3;
+    document.getElementById('scan-status').textContent = c.scanStatus;
+    document.getElementById('card1-desc').textContent  = c.c1desc;
+    document.getElementById('card2-desc').textContent  = c.c2desc;
+  }
+
+  let voiceActive = false;
+  function toggleVoice() {
+    voiceActive = !voiceActive;
+    const btn = document.getElementById('voiceBtn');
+    const lbl = document.getElementById('voice-label');
+    if (voiceActive) {
+      btn.style.background = 'linear-gradient(135deg, #e05252, #c43a3a)';
+      btn.style.boxShadow  = '0 4px 24px rgba(224,82,82,0.5)';
+      lbl.textContent = lang === 'mr' ? 'ऐकत आहे...' : 'Listening...';
+      setTimeout(() => {
+        toggleVoice();
+        lbl.textContent = lang === 'mr' ? 'अन्नपूर्णाशी बोला' : 'Speak to Annapurna';
+      }, 3500);
+    } else {
+      btn.style.background = 'linear-gradient(135deg, #4caf72, #2d7a4f)';
+      btn.style.boxShadow  = '0 4px 24px rgba(45,122,79,0.5)';
+    }
+  }
+
+  // SDG pill click
+  document.querySelectorAll('.sdg-pill').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('.sdg-pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
